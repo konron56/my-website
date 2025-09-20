@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お絵かきアプリ</title>
+  <style>
+    body {
+      background: #fff7e6;
+      color: #5a4636;
+      font-family: 'Yu Gothic', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 700px;
+      margin: 40px auto;
+      background: rgba(255,255,255,0.95);
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(200,150,100,0.08);
+      padding: 32px 24px;
+      text-align: center;
+    }
+    h1 {
+      color: #d48c6a;
+      font-size: 2em;
+      margin-bottom: 1em;
+    }
+    canvas {
+      border: 2px solid #d48c6a;
+      border-radius: 8px;
+      background: #fff;
+      cursor: crosshair;
+      margin-bottom: 16px;
+    }
+    .controls {
+      margin-bottom: 16px;
+    }
+    .controls input[type="color"] {
+      margin-right: 8px;
+    }
+    .controls button {
+      background: #ffe4e1;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 16px;
+      color: #a86c4a;
+      font-size: 1em;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .controls button:hover {
+      background: #ffd6c1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>お絵かきアプリ</h1>
+    <div class="controls">
+      <input type="color" id="colorPicker" value="#d48c6a">
+      <label for="brushSize">ブラシサイズ:</label>
+      <input type="range" id="brushSize" min="2" max="30" value="6">
+      <button id="clearBtn">クリア</button>
+    </div>
+    <canvas id="drawingCanvas" width="600" height="400"></canvas>
+    <p>好きな色とブラシサイズで自由に描いてみましょう！</p>
+  </div>
+  <script>
+    const canvas = document.getElementById('drawingCanvas');
+    const ctx = canvas.getContext('2d');
+    const colorPicker = document.getElementById('colorPicker');
+    const brushSize = document.getElementById('brushSize');
+    const clearBtn = document.getElementById('clearBtn');
+    let drawing = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    canvas.addEventListener('mousedown', (e) => {
+      drawing = true;
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+    });
+    canvas.addEventListener('mouseup', () => drawing = false);
+    canvas.addEventListener('mouseout', () => drawing = false);
+    canvas.addEventListener('mousemove', draw);
+
+    function draw(e) {
+      if (!drawing) return;
+      ctx.strokeStyle = colorPicker.value;
+      ctx.lineWidth = brushSize.value;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+      [lastX, lastY] = [e.offsetX, e.offsetY];
+    }
+
+    clearBtn.addEventListener('click', () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+  </script>
+</body>
+</html>
